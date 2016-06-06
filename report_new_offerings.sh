@@ -1,0 +1,4 @@
+TITLES=$1
+SMSEMAIL=$2
+
+echo $TITLES | mail -s 'GOLD-CLUB ALERT' $SMSEMAIL

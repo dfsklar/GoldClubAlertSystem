@@ -43,6 +43,7 @@ def fetch_fresh_available_titles(html):
             if line_num == 2:
                 the_match = regex_title.match(line)
                 if the_match:
+                    title = the_match.group(1)
                     available_titles.append(title)
                 else:
                     raise Exception("Change in format detected: series-title did not presage actual title two lines later")
