@@ -19,10 +19,13 @@ def login_and_grab_roster():
     response_login = br.submit()
 
     html = response_login.get_data()
+    #print html
 
     # We really don't want the default "show all" page
     br.open("https://www.theaterclub.com/ny/upcoming/new")
     html = br.response().read()
+    #print "------------------"
+    #print html
 
     return html
 
@@ -57,7 +60,7 @@ def fetch_previous_available_titles():
 
 
 def titlelist_abbrev(arr_titles):
-    return str(map(lambda t: t[0:15], arr_titles))
+    return str(map(lambda t: t[0:45], arr_titles))
 
 # This differ Would be much nicer as a lambda use of filter() -- good exercise for Matt
 def differ(old, new):
@@ -78,9 +81,12 @@ new_avail = fetch_fresh_available_titles(login_and_grab_roster())
 
 new_offerings = differ(prev_avail, new_avail)
 if new_offerings:
+    print "There are new offerings"
     import subprocess
     retval = subprocess.call(['/bin/sh', './report_new_offerings.sh', titlelist_abbrev(new_offerings), credentials.SMSEMAIL])
     print("Return value from the email-alert launch: " + str(retval))
+else:
+    print "NO NEW OFFERINGS"
 
 with open("avail_titles.pkl", "w") as f:
     pickle.dump(new_avail, f)
