@@ -1,6 +1,7 @@
 import re
 import mechanize
 import pickle
+from difflib import SequenceMatcher
 
 import credentials
 
@@ -62,12 +63,21 @@ def fetch_previous_available_titles():
 def titlelist_abbrev(arr_titles):
     return str(map(lambda t: t[0:45], arr_titles))
 
-# This differ Would be much nicer as a lambda use of filter() -- good exercise for Matt
+
 def differ(old, new):
     new_offerings = []
-    for x in new:
-        if x not in old:
-            new_offerings.append(x)
+    for new_candidate in new:
+        #print "======================"
+        #print "Looking for match for " + new_candidate
+        old_matching_entry = list(filter(lambda x: SequenceMatcher(None, x, new_candidate).ratio() > 0.8, old))
+        if not old_matching_entry:
+            new_offerings.append(new_candidate)
+            #print "DIFFER IS SAYING THIS IS NEW:"
+            #print new_candidate
+            #print old
+        #else:
+            #print "Found match: "
+            #print old_matching_entry
     return new_offerings
 
 
