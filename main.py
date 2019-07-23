@@ -5,6 +5,8 @@ from difflib import SequenceMatcher
 
 import credentials
 
+IMPORTANT_TITLEWORD = 'Havel'
+
 
 # Returns the raw HTML of the roster page post-login
 def login_and_grab_roster():
@@ -95,8 +97,7 @@ if new_offerings:
     print "There are new offerings"
     import subprocess
     titles =  titlelist_abbrev(new_offerings).replace('\'','').replace('"','')
-    retval = subprocess.call(['/bin/sh', './report_new_offerings.sh', titles, credentials.SMSEMAIL])
-    print("Return value from the email-alert launch: " + str(retval))
+
     retval = subprocess.call([
         'curl',
         '-X',
@@ -106,6 +107,12 @@ if new_offerings:
         'https://hooks.slack.com/services/%s' % credentials.SLACK
     ])
     print("Return value from the slack webhook launch: " + str(retval))
+
+    if IMPORTANT_TITLEWORD in titles:
+        if credentials.SMSEMAIL:
+            retval = subprocess.call(['/bin/sh', './report_new_offerings.sh', titles, credentials.SMSEMAIL])
+            print("Return value from the email-alert launch: " + str(retval))
+
 
 
 with open("avail_titles.pkl", "w") as f:
